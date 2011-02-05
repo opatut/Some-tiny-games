@@ -80,6 +80,7 @@ int main() {
 	sf::Clock clock;
 	float time_since = 0;
 	bool running = false;
+	float speed = 0.2;
 
 	while(app.IsOpened()) {
 		float frame_time = clock.GetElapsedTime();
@@ -98,26 +99,40 @@ int main() {
 			if(e.Type == sf::Event::KeyPressed && e.Key.Code == sf::Key::Space)
 				running = !running;
 
+			if(e.Type == sf::Event::KeyPressed && e.Key.Code == sf::Key::C) {
+				for(int i = 0; i < F; ++i) {
+					for(int j = 0; j < F; ++j) {
+						tiles[i][j].mLiving = false;
+					}
+				}
+			}
+			
+			if(e.Type == sf::Event::KeyPressed && e.Key.Code == sf::Key::Up && speed > 0.02)
+				speed -= 0.02;
+			
+			if(e.Type == sf::Event::KeyPressed && e.Key.Code == sf::Key::Down && speed < 1)
+				speed += 0.02;
+
+
+
 
 		}
 
 		if(app.GetInput().IsMouseButtonDown(sf::Mouse::Left)) {
 			int x = app.GetInput().GetMouseX() / S;
 			int y = app.GetInput().GetMouseY() / S;
-			if(!tiles[x][y].mLiving)
-				tiles[x][y].Toggle();
+			tiles[x][y].mLiving = true;
 		}
 		if(app.GetInput().IsMouseButtonDown(sf::Mouse::Right)) {
 			int x = app.GetInput().GetMouseX() / S;
 			int y = app.GetInput().GetMouseY() / S;
-			if(tiles[x][y].mLiving)
-				tiles[x][y].Toggle();
+			tiles[x][y].mLiving = false;
 		}
 
 		app.Clear();
 
 
-		if(time_since > 0.2) {
+		if(time_since > speed) {
 			for(int i = 0; i < F; ++i) {
 				for(int j = 0; j < F; ++j) {
 					tiles[i][j].Tick(i, j);
