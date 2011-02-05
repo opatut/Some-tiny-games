@@ -25,7 +25,7 @@ class Tile {
 			if(!mLiving) {
 				mLiving = (num == 3);
 			} else{
-				mLiving = (num >= 2 && num <= 4);
+				mLiving = (num >= 2 && num <= 3);
 			}
 		}
 
@@ -98,19 +98,26 @@ int main() {
 			if(e.Type == sf::Event::KeyPressed && e.Key.Code == sf::Key::Space)
 				running = !running;
 
-			if(e.Type == sf::Event::MouseButtonPressed) {
-				int x = app.GetInput().GetMouseX() / S;
-				int y = app.GetInput().GetMouseY() / S;
-
-				tiles[x][y].Toggle();
-			}
 
 		}
 
+		if(app.GetInput().IsMouseButtonDown(sf::Mouse::Left)) {
+			int x = app.GetInput().GetMouseX() / S;
+			int y = app.GetInput().GetMouseY() / S;
+			if(!tiles[x][y].mLiving)
+				tiles[x][y].Toggle();
+		}
+		if(app.GetInput().IsMouseButtonDown(sf::Mouse::Right)) {
+			int x = app.GetInput().GetMouseX() / S;
+			int y = app.GetInput().GetMouseY() / S;
+			if(tiles[x][y].mLiving)
+				tiles[x][y].Toggle();
+		}
 
 		app.Clear();
 
-		if(time_since > 1) {
+
+		if(time_since > 0.2) {
 			for(int i = 0; i < F; ++i) {
 				for(int j = 0; j < F; ++j) {
 					tiles[i][j].Tick(i, j);
@@ -125,6 +132,10 @@ int main() {
 			}
 		}
 
+		for(int i = 0; i < F; ++i) {
+			app.Draw(sf::Shape::Line(i*S, 0, i*S, 400, 1, sf::Color(100,100,100,100)));
+			app.Draw(sf::Shape::Line(0, i*S, 400, i*S, 1, sf::Color(100,100,100,100)));
+		}
 
 		app.Display();
 
